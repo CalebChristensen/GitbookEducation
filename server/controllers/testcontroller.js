@@ -116,4 +116,20 @@ router.get('/mycontacts', function(req, res) {
         {user: "Quincy", email: "tom@beastmode.com"}
     ]);
 });
+
+router.get('/one', function(req, res) {
+    TestModel
+    .findAll({ //Notice that we find the attributes for two of the columns: id & testdata. This is part of sequelize. If you are querying an entire table, you can choose which columns you want to grab from. The other columns will not be queried, which can save time for a giant table.
+        attributes: ['id', 'testdata']
+    })
+    .then(
+        function findAllSuccess(data) {
+            console.log("Controller data:", data);
+            res.json(data);
+        },
+        function findAllError(err) {
+            res.send(500, err.message);
+        }
+    );
+});
 module.exports = router; //we export the module for usage outside the file.
