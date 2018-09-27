@@ -3,6 +3,10 @@ var router = express.Router(); //created a new variable called router. we are us
 var sequelize = require('../db');
 var TestModel = sequelize.import('../models/test') //We import the test model and store it in TestModel.
 
+router.get('/helloclient', function (req, res) {
+    res.send('This is a message from the server to the client.')
+})
+
 router.post('/one', function(req, res){//We use the express router object to call the post() method. This corresponds to the type of HTTP request that we are sending. Post is telling the server that the incoming request has data coming with it. You use a POST request when you sign up for an application, send an email, etc.
     res.send("Got a post request.")
 });

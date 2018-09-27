@@ -11,6 +11,8 @@ sequelize.sync();
 
 app.use(bodyParser.json()); //this statment MUST go above any routes. Any routes above this statement will not be able to use the bodyparser library.
 
+app.use(require('./middleware/headers')); //This activates our header in the app.js. Keep in mind that this in order, so the file will be read sequentially, which means taht the headers must come befroe the routes are declared.
+
 app.use('/test', test) //We call app.use in the first parameter create a base url called /test so our base URL looks like this. http://localhost:3000/test
 //For our second parameter for the use() function, we pass in test. This means that all routes created in tescontroller.js file will be sub-routes and look like this             http://localhost:3000/test or http://localhost:3000/test/
 

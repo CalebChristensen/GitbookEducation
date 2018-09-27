@@ -4,6 +4,12 @@ const express = require('express'); //enables us to use express by saying the va
 const app = express(); //automatically runs express when we open the file
 
 const pie = require('./controllers/piecontroller')
+const sequelize = require('./db') // all root info of sequelize will be in our ./db
+const bodyParser = require('body-parser')
+
+sequelize.sync();
+
+app.use(bodyParser.json())
 
 app.use(express.static(__dirname + '/public')) //dirname is a built in for node server that pinponts the location of your current directory.
 
