@@ -143,3 +143,88 @@ function showCurrentData(e) { //e is the default variable name for an Event List
         else myItem.value = response.authtestdata; //We could use innerHTML to set the value, but that method doesnt work with <input> elements. Instead, we use value to insert our data into the field.
     })
 }
+
+// || DELETE and item ||
+function deleteItem(){
+    let postIdNumber = document.getElementById("deleteNumber").value;
+
+    const fetch_url = `http://localhost:3000/authtest/delete/${postIdNumber}` //Again we get the id number submitted by the user and pass it into the url vai a template literal.
+    const accessToken = localStorage.getItem('SessionToken')
+
+    const response = fetch(fetch_url, {
+        method: 'DELETE', //Our HTTP verb is DELETE in this case, so we use the DELETE method.
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': accessToken
+        }
+    })
+    .then(response => { //We print the response to the console and also run the fetchALlFromAuthRoute function again, which will print all remaining items for our user to the console.
+        console.log(response);
+        fetchAllFromAuthRoute()
+    })
+}
+ 
+function deleteItemById(paraNum) { // The id of the <li> is passed into this function as a parameter, which is then added to the url via the template literal.
+    const fetch_url = `http://localhost:3000/authtest/delete/${paraNum}`
+    const accessToken = localStorage.getItem('SessionToken')
+
+    const response = fetch(fetch_url, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': accessToken
+        }
+    })
+    .then(response => {
+        console.log(response); //Print the response to the console to verify the delete worked.
+        fetchAllFromAuthRoute(); //Run the getall function again to print the remaining items in the DB to the console.
+    })
+}
+
+function fetchFromOneDisplayData() {
+    const url = 'http://localhost:3000/authtest/getall';
+    const accessToken = localStorage.getItem('SessionToken')
+
+    fetch(url, {
+        method: 'GET',
+        headers: new Headers({
+            'Content-Type': 'application/json',
+            'Authorization': accessToken
+        })
+    }).then(
+        function (response) {
+            return response.json()
+        })
+        .catch(
+            function (error) {
+                console.error('Error:', error)
+            })
+            .then(
+                function (response) {
+                    let text = '';
+                    var myList = document.querySelector('ul#fourteen'); //This is a little different way of making a reference to a DOM element. We're aiming for a <ul> element with an id of fourteen (the # signals the program to look for an id rather than a class)
+                    while (myList.firstChild) { //This should look familar to you. This is the same way we cleared  out the <section> elements in the NYT and YouTube API mini-apps.
+                        myList.removeChild(myList.firstChild)
+                    }
+                    console.log(response);
+                    for (r of response) { //We use a for of loop to iterate through the values of each key: value object pair.
+                        var listItem = document.createElement('li'); //Given that we're working with a <ul> element, each loop will create a different <li>
+                        var textData = r.id + ' ' + r.authtestdata; //We create a string with the id and authtestdata properties, then put that string into the <li> element.
+                        listItem.innerHTML = textData;
+                        listItem.setAttribute('id', r.id); //We add the id property of each object as an id for each <li> this will allow us to call them individually later.
+                        myList.appendChild(listItem); //The <li> child element is added to the end of the <ul> parent element.
+                        myList.addEventListener('click', removeItem); //We add our custom listner to run whenever an <li> is clicked.
+                    }
+                })
+}
+
+function removeItem(e) {
+    console.log(e); //Print e to the console to check which item we're clicking on.
+    var target = e.target; //target is a nested object within e. This places that object inside its own variable.
+    if (target.tagName !== 'LI') return; //If the item we're clicking on isnt an <li> element, the empty return statment exits the conditional.
+    else target.parentNode.removeChild(target); //We remove the <li> child from the <ul> parent.
+
+    let x = target.getAttribute("id") //Earlier we sent an id for the <li>. Now we get it back so we can pass it to the DELETE request.
+    //deleteItemById(x); 
+    console.log("The id number for this item is " + x);
+}
